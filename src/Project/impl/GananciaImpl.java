@@ -10,4 +10,9 @@ public class GananciaImpl implements Ganancia {
     public double calcularGananciaTotal(List<CultivoSeleccionado> cultivos) {
         return 0;
     }
+
+    @Override
+    public double calcularGananciaCultivo(CultivoSeleccionado cultivo) {
+        return 0;
+    }
 }

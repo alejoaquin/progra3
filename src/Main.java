@@ -1,14 +1,15 @@
 
 import Lib.Cultivo;
 import Lib.CultivoSeleccionado;
-import Project.PlanificarCultivosImplementacion;
+import Lib.PlanificarCultivos;
+import Project.impl.PlanificarCultivosImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        PlanificarCultivosImplementacion planificador = new PlanificarCultivosImplementacion();
+        PlanificarCultivos planificador = new PlanificarCultivosImpl();
 
         List<Cultivo> cultivos = new ArrayList<>();
 

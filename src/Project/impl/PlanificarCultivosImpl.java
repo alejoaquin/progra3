@@ -13,6 +13,4 @@ public class PlanificarCultivosImpl implements PlanificarCultivos {
     public List<CultivoSeleccionado> obtenerPlanificacion(List<Cultivo> cultivosDisponibles, double[][] riesgos, String temporada) {
         return new ArrayList<>();
     }
-
-
 }

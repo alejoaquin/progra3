@@ -26,7 +26,6 @@ public class AlternativaImpl implements Alternativa {
             for (int yInicio = 0; yInicio < cols; yInicio++) {
                 // Iteramos sobre todas las posibles esquinas inferiores derechas
                 for (int xFin = xInicio; xFin < rows; xFin++) {
-                    List<Double> riesgosAsociados = new ArrayList<>();
                     for (int yFin = yInicio; yFin < cols; yFin++) {
                         // Verificamos que la suma de las longitudes no supere 11
                         int longitudHorizontal = xFin - xInicio + 1;

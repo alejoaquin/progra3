@@ -1,14 +1,13 @@
 package Project.models;
 
 import Lib.Cultivo;
-import Lib.CultivoSeleccionado;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ESBacktracking {
-    public List<CultivoSeleccionado> cultivosResultado = new ArrayList<>();
-    public List<CultivoSeleccionado> cultivosParcial = new ArrayList<>();
+    public List<CultivoSeleccionadoV2> cultivosResultado = new ArrayList<>();
+    public List<CultivoSeleccionadoV2> cultivosParcial = new ArrayList<>();
     public Marca[][] marcas; // para solución parcial
     public double[][] riesgos;
     public String temporada;
@@ -16,7 +15,7 @@ public class ESBacktracking {
     public int etapa;
     public double gananciaMejor;
 
-    public ESBacktracking(List<CultivoSeleccionado> cultivosResultado, List<CultivoSeleccionado> cultivosParcial, Marca[][] marcas, double[][] riesgos, String temporada, List<Cultivo> cultivos, int etapa, double gananciaMejor) {
+    public ESBacktracking(List<CultivoSeleccionadoV2> cultivosResultado, List<CultivoSeleccionadoV2> cultivosParcial, Marca[][] marcas, double[][] riesgos, String temporada, List<Cultivo> cultivos, int etapa, double gananciaMejor) {
         this.cultivosResultado = cultivosResultado;
         this.cultivosParcial = cultivosParcial;
         this.marcas = marcas;

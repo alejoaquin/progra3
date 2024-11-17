@@ -1,7 +1,7 @@
 package Project.utils;
 
 import Lib.Coordenada;
-import Lib.CultivoSeleccionado;
+import Project.models.CultivoSeleccionadoV2;;
 import Project.models.Marca;
 
 public class CultivoUtils {
@@ -22,7 +22,7 @@ public class CultivoUtils {
         }
     }
 
-    public static void imprimirMatrizConColision(Marca[][] matriz, CultivoSeleccionado cultivo) {
+    public static void imprimirMatrizConColision(Marca[][] matriz, CultivoSeleccionadoV2 cultivo) {
         // Obtener las coordenadas del cultivo
         Coordenada superiorIzquierda = cultivo.getEsquinaSuperiorIzquierda();
         Coordenada inferiorDerecha = cultivo.getEsquinaInferiorDerecha();

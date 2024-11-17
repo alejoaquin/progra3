@@ -77,29 +77,31 @@ public class Main {
         cultivo.setTemporadaOptima("Verano");
         cultivos.add(cultivo);
 
-//        cultivo = new Cultivo();
-//        cultivo.setNombre("Espinaca");
-//        cultivo.setCostoPorParcela(1);
-//        cultivo.setInversionRequerida(1);
-//        cultivo.setPrecioDeVentaPorParcela(460);
-//        cultivo.setTemporadaOptima("Invierno");
-//        cultivos.add(cultivo);
-//
-//        cultivo = new Cultivo();
-//        cultivo.setNombre("Brócoli");
-//        cultivo.setCostoPorParcela(1);
-//        cultivo.setInversionRequerida(1);
-//        cultivo.setPrecioDeVentaPorParcela(510);
-//        cultivo.setTemporadaOptima("Otoño");
-//        cultivos.add(cultivo);
+        cultivo = new Cultivo();
+        cultivo.setNombre("Espinaca");
+        cultivo.setCostoPorParcela(1);
+        cultivo.setInversionRequerida(1);
+        cultivo.setPrecioDeVentaPorParcela(460);
+        cultivo.setTemporadaOptima("Verano");
+        cultivos.add(cultivo);
 
-        int size = 1;
+        cultivo = new Cultivo();
+        cultivo.setNombre("Brócoli");
+        cultivo.setCostoPorParcela(1);
+        cultivo.setInversionRequerida(1);
+        cultivo.setPrecioDeVentaPorParcela(510);
+        cultivo.setTemporadaOptima("Otoño");
+        cultivos.add(cultivo);
+
+        int size = 7;
 
         double[][] riesgos = new double[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 riesgos[i][j] = (i + j) / 200.0;
+                System.out.print(riesgos[i][j] + "\t");
             }
+            System.out.print("\n");
         }
         List<CultivoSeleccionadoV2> cultivosResultado = new ArrayList<>();
         List<CultivoSeleccionadoV2> cultivosParcial = new ArrayList<>();

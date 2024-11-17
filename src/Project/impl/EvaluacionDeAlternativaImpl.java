@@ -152,7 +152,7 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
 
         if (yFin + 1 < marcas[0].length) {
             for (int i = xInicio; i <= xFin; i++) {
-                if (alternativa.getCultivo().getNombre().equals(marcas[i][yFin + 1].nombre)) {
+                if (alternativa.getNombreCultivo().equals(marcas[i][yFin + 1].nombre)) {
                     Coordenada coordenada = new Coordenada(i, yFin + 1);
                     adyacentesDerecha.add(coordenada);
                 }
@@ -171,7 +171,7 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
 
         if (yInicio - 1 >= 0) {
             for (int i = xInicio; i <= xFin; i++) {
-                if (alternativa.getCultivo().getNombre().equals(marcas[i][yInicio - 1].nombre)) {
+                if (alternativa.getNombreCultivo().equals(marcas[i][yInicio - 1].nombre)) {
                     Coordenada coordenada = new Coordenada(i, yInicio - 1);
                     adyacentesIzquierda.add(coordenada);
                 }
@@ -190,7 +190,7 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
 
         if (xInicio - 1 >= 0) {
             for (int j = yInicio; j <= yFin; j++) {
-                if (alternativa.getCultivo().getNombre().equals(marcas[xInicio - 1][j].nombre)) {
+                if (alternativa.getNombreCultivo().equals(marcas[xInicio - 1][j].nombre)) {
                     Coordenada coordenada = new Coordenada(xInicio - 1, j);
                     adyacentesArriba.add(coordenada);
                 }
@@ -209,7 +209,7 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
 
         if (xFin + 1 <= marcas.length) {
             for (int j = yInicio; j <= yFin; j++) {
-                if (alternativa.getCultivo().getNombre().equals(marcas[xFin + 1][j].nombre)) {
+                if (alternativa.getNombreCultivo().equals(marcas[xFin + 1][j].nombre)) {
                     Coordenada coordenada = new Coordenada(xFin + 1, j);
                     adyacentesAbajo.add(coordenada);
                 }

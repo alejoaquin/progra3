@@ -7,7 +7,7 @@ import Project.models.Marca;
 
 public class ManejarMarcaImpl implements ManejarMarca {
     @Override
-    public Marca[][] marcarMatriz(CultivoSeleccionadoV2 cultivo, Marca[][] matrizActual, boolean marcar) {
+    public void marcarMatriz(CultivoSeleccionadoV2 cultivo, Marca[][] matrizActual, boolean marcar) {
         // Obtener las coordenadas del cultivo
         Coordenada superiorIzquierda = cultivo.getEsquinaSuperiorIzquierda();
         Coordenada inferiorDerecha = cultivo.getEsquinaInferiorDerecha();
@@ -29,8 +29,5 @@ public class ManejarMarcaImpl implements ManejarMarca {
                 }
             }
         }
-
-        // Retornamos la matriz modificada
-        return matrizActual;
     }
 }

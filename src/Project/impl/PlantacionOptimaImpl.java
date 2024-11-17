@@ -33,7 +33,7 @@ public class PlantacionOptimaImpl implements PlantacionOptima {
         alternativas.forEach(
                 alternativa -> {
                     if (Objects.nonNull(alternativa)) {
-                        p.marcas = manejarMarca.marcarMatriz(alternativa, p.marcas, true);
+                        manejarMarca.marcarMatriz(alternativa, p.marcas, true);
                         p.cultivosParcial.add(alternativa);
                     }
                     ESBacktracking conRelleno = p.clonar();
@@ -55,7 +55,7 @@ public class PlantacionOptimaImpl implements PlantacionOptima {
                     }
 
                     if (Objects.nonNull(alternativa)) {
-                        p.marcas = manejarMarca.marcarMatriz(alternativa, p.marcas, false);
+                        manejarMarca.marcarMatriz(alternativa, p.marcas, false);
                         p.cultivosParcial.remove(alternativa);
                     }
                 }

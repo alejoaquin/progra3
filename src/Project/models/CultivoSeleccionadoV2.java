@@ -1,24 +1,23 @@
 package Project.models;
 
 import Lib.Coordenada;
-
-import java.util.List;
+import Lib.Cultivo;
 
 //ToDo: eliminar cuando tengamos versión 2 de la lib
 public class CultivoSeleccionadoV2 {
-    private String nombreCultivo;
+    private Cultivo cultivo;
     private Coordenada esquinaSuperiorIzquierda;
     private Coordenada esquinaInferiorDerecha;
     private double montoInvertido;
-    private List<Double> riesgosAsociado;
+    private double riesgoAsociado;
     private double gananciaObtenida;
 
-    public CultivoSeleccionadoV2(String nombreCultivo, Coordenada esquinaSuperiorIzquierda, Coordenada esquinaInferiorDerecha, double montoInvertido, List<Double> riesgosAsociado, double gananciaObtenida) {
-        this.nombreCultivo = nombreCultivo;
+    public CultivoSeleccionadoV2(Cultivo cultivo, Coordenada esquinaSuperiorIzquierda, Coordenada esquinaInferiorDerecha, double montoInvertido, double riesgoAsociado, double gananciaObtenida) {
+        this.cultivo = cultivo;
         this.esquinaSuperiorIzquierda = esquinaSuperiorIzquierda;
         this.esquinaInferiorDerecha = esquinaInferiorDerecha;
         this.montoInvertido = montoInvertido;
-        this.riesgosAsociado = riesgosAsociado;
+        this.riesgoAsociado = riesgoAsociado;
         this.gananciaObtenida = gananciaObtenida;
     }
 
@@ -26,11 +25,15 @@ public class CultivoSeleccionadoV2 {
     }
 
     public String getNombreCultivo() {
-        return nombreCultivo;
+        return cultivo.getNombre();
     }
 
-    public void setNombreCultivo(String nombreCultivo) {
-        this.nombreCultivo = nombreCultivo;
+    public Cultivo getCultivo() {
+        return cultivo;
+    }
+
+    public void setCultivo(Cultivo cultivo) {
+        this.cultivo = cultivo;
     }
 
     public Coordenada getEsquinaSuperiorIzquierda() {
@@ -57,12 +60,8 @@ public class CultivoSeleccionadoV2 {
         this.montoInvertido = montoInvertido;
     }
 
-    public List<Double> getRiesgoAsociado() {
-        return riesgosAsociado;
-    }
-
-    public void setRiesgoAsociado(List<Double> riesgosAsociado) {
-        this.riesgosAsociado = riesgosAsociado;
+    public double getRiesgoAsociado() {
+        return this.riesgoAsociado;
     }
 
     public double getGananciaObtenida() {

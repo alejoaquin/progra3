@@ -26,4 +26,6 @@ bin/
 ### Mac OS ###
 .DS_Store
 
+seudocodigo
+
 .idea/

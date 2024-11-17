@@ -1,13 +1,23 @@
+import Lib.Coordenada;
 import Lib.Cultivo;
 import Lib.CultivoSeleccionado;
 import Lib.PlanificarCultivos;
+import Project.EvaluacionDeAlternativa;
+import Project.impl.EvaluacionDeAlternativaImpl;
 import Project.impl.PlanificarCultivosImpl;
+import Project.models.Marca;
+import Project.utils.CultivoUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+        testEvaluacionDeAlternativaRelleno();
+    }
+
+    //ToDo: poner devuelta en el main para la entrega
+    private static void mainAnterior() {
         PlanificarCultivos planificador = new PlanificarCultivosImpl();
 
         List<Cultivo> cultivos = new ArrayList<>();
@@ -87,6 +97,55 @@ public class Main {
 
         List<CultivoSeleccionado> res = planificador.obtenerPlanificacion(cultivos, riesgos, "Otoño");
         imprimirResultado(res);
+    }
+
+    //ToDo: eliminar esto para la entrega
+    private static void testEvaluacionDeAlternativa() {
+        EvaluacionDeAlternativa evaluador = new EvaluacionDeAlternativaImpl();
+
+        Marca[][] matriz = new Marca[10][10];
+        matriz[0][6] = new Marca("Maíz");
+        matriz[4][5] = new Marca("Frijol");
+
+        CultivoSeleccionado cultivo = new CultivoSeleccionado();
+        cultivo.setNombreCultivo("Tomate");
+        cultivo.setEsquinaSuperiorIzquierda(new Coordenada(1, 1));
+        cultivo.setEsquinaInferiorDerecha(new Coordenada(4, 5));
+
+        CultivoUtils.imprimirMatrizConColision(matriz, cultivo);
+
+        boolean esValido = evaluador.esValida(matriz, cultivo);
+        System.out.println("Es válido: " + esValido);
+    }
+
+    //ToDo: eliminar esto para la entrega
+    private static void testEvaluacionDeAlternativaRelleno() {
+        EvaluacionDeAlternativa evaluador = new EvaluacionDeAlternativaImpl();
+
+        Marca[][] matriz = new Marca[10][10];
+        matriz[0][0] = new Marca("Maíz");
+        matriz[0][1] = new Marca("Maíz");
+        matriz[0][2] = new Marca("Maíz");
+        matriz[0][3] = new Marca("Maíz");
+        matriz[1][0] = new Marca("Maíz");
+        matriz[1][1] = new Marca("Maíz");
+        matriz[1][2] = new Marca("Maíz");
+        matriz[1][3] = new Marca("Maíz");
+
+
+        CultivoSeleccionado mismoCultivoPlantado = new CultivoSeleccionado();
+        mismoCultivoPlantado.setNombreCultivo("Maíz");
+        mismoCultivoPlantado.setEsquinaSuperiorIzquierda(new Coordenada(0, 0));
+        mismoCultivoPlantado.setEsquinaInferiorDerecha(new Coordenada(1, 3));
+
+        CultivoSeleccionado alternativaAEvaluar = new CultivoSeleccionado();
+        alternativaAEvaluar.setNombreCultivo("Maíz");
+        alternativaAEvaluar.setEsquinaSuperiorIzquierda(new Coordenada(2, 2));
+        alternativaAEvaluar.setEsquinaInferiorDerecha(new Coordenada(3, 9));
+
+        boolean esValido = evaluador.esRellenoValido(matriz, mismoCultivoPlantado, alternativaAEvaluar);
+        System.out.println("Es válido: " + esValido);
+        //CultivoUtils.imprimirMatrizConColision(matriz, alternativaAEvaluar);
     }
 
     private static void imprimirMatrizDeRiesgos(double[][] riesgos) {

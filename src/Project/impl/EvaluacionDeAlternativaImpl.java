@@ -72,12 +72,14 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
         int xFinPlantado = inferiorDerechaPlantado.getX();
         int yFinPlantado = inferiorDerechaPlantado.getY();
 
+        boolean esAdyacenteEnX = hayAdyacencia(xInicio, xFin, xInicioPlantado, xFinPlantado);
+        boolean esAdyacenteEnY = hayAdyacencia(yInicio, yFin, yInicioPlantado, yFinPlantado);
+
         // Verificar la longitud de la adyacencia combinada
-        if (hayAdyacencia(xInicio, xFin, xInicioPlantado, xFinPlantado) || hayAdyacencia(yInicio, yFin, yInicioPlantado, yFinPlantado)
-        ) {
+        if (esAdyacenteEnX || esAdyacenteEnY) {
             //ToDo: chequear si se suma sólo el eje adyacente o es total
-            int longitudXAdyacente = calcularLongitudAdyacente(xInicio, xFin, xInicioPlantado, xFinPlantado);
-            int longitudYAdyacente = calcularLongitudAdyacente(yInicio, yFin, yInicioPlantado, yFinPlantado);
+            int longitudXAdyacente = calcularLongitudAdyacente(xInicio, xFin, xInicioPlantado, xFinPlantado, esAdyacenteEnX);
+            int longitudYAdyacente = calcularLongitudAdyacente(yInicio, yFin, yInicioPlantado, yFinPlantado, esAdyacenteEnY);
             int longitudTotalAdyacente = longitudXAdyacente + longitudYAdyacente;
             // Si la longitud total de la adyacencia excede 11, no es válido
             if (longitudTotalAdyacente > 11) {
@@ -103,10 +105,22 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
     }
 
     private boolean hayAdyacencia(int alternativaInicio, int alternativaFin, int inicioPlantado, int finPlantado) {
-        return (inicioPlantado <= alternativaInicio && alternativaInicio <= finPlantado) || (alternativaInicio <= inicioPlantado && inicioPlantado <= alternativaFin);
+        return Math.abs(alternativaInicio - finPlantado) == 1 || Math.abs(inicioPlantado - alternativaFin) == 1;
     }
 
-    private int calcularLongitudAdyacente(int alternativaInicio, int alternativaFin, int inicioPlantado, int finPlantado) {
-        return Math.abs(Math.max(alternativaFin, finPlantado) - Math.min(alternativaInicio, inicioPlantado)) + 1;
+    private int calcularLongitudAdyacente(int alternativaInicio, int alternativaFin, int inicioPlantado, int finPlantado, boolean esElAdyacente) {
+        int inicio = 0;
+        int fin = 0;
+
+        if (esElAdyacente) {
+            inicio = Math.min(alternativaInicio, inicioPlantado);
+            fin = Math.max(alternativaFin, finPlantado);
+
+        } else {
+            inicio = Math.max(alternativaInicio, inicioPlantado);
+            fin = Math.min(alternativaFin, finPlantado);
+        }
+
+        return (fin - inicio) + 1;
     }
 }

@@ -1,19 +1,24 @@
 import Lib.Coordenada;
 import Lib.Cultivo;
-import Project.models.CultivoSeleccionadoV2;;
+import Lib.CultivoSeleccionado;
 import Lib.PlanificarCultivos;
 import Project.EvaluacionDeAlternativa;
+import Project.ManejarMarca;
 import Project.impl.EvaluacionDeAlternativaImpl;
+import Project.impl.ManejarMarcaImpl;
 import Project.impl.PlanificarCultivosImpl;
+import Project.models.CultivoSeleccionadoV2;
 import Project.models.Marca;
 import Project.utils.CultivoUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+;
+
 public class Main {
     public static void main(String[] args) {
-        testEvaluacionDeAlternativaRelleno();
+        tesMarcaPorReferencia();
     }
 
     //ToDo: poner devuelta en el main para la entrega
@@ -95,7 +100,7 @@ public class Main {
         }
         imprimirMatrizDeRiesgos(riesgos);
 
-        List<CultivoSeleccionadoV2> res = planificador.obtenerPlanificacion(cultivos, riesgos, "Otoño");
+        List<CultivoSeleccionado> res = planificador.obtenerPlanificacion(cultivos, riesgos, "Otoño");
         imprimirResultado(res);
     }
 
@@ -143,9 +148,31 @@ public class Main {
         alternativaAEvaluar.setEsquinaSuperiorIzquierda(new Coordenada(2, 2));
         alternativaAEvaluar.setEsquinaInferiorDerecha(new Coordenada(3, 9));
 
-        boolean esValido = evaluador.esRellenoValido(matriz, mismoCultivoPlantado, alternativaAEvaluar);
+        boolean esValido = evaluador.esRellenoValido(matriz, List.of(mismoCultivoPlantado), alternativaAEvaluar);
         System.out.println("Es válido: " + esValido);
-        //CultivoUtils.imprimirMatrizConColision(matriz, alternativaAEvaluar);
+        CultivoUtils.imprimirMatrizConColision(matriz, alternativaAEvaluar);
+    }
+
+    //ToDo: eliminar esto para la entrega
+    private static void tesMarcaPorReferencia() {
+        ManejarMarca manejarMarca = new ManejarMarcaImpl();
+
+        Marca[][] matriz = new Marca[10][10];
+
+        CultivoSeleccionadoV2 cultivo = new CultivoSeleccionadoV2();
+        cultivo.setNombreCultivo("Tomate");
+        cultivo.setEsquinaSuperiorIzquierda(new Coordenada(1, 1));
+        cultivo.setEsquinaInferiorDerecha(new Coordenada(4, 5));
+
+        manejarMarca.marcarMatriz(cultivo, matriz, true);
+        System.out.println("Marcar");
+        CultivoUtils.imprimirMatrizMarca(matriz);
+
+
+        System.out.println("Desmarcar");
+        manejarMarca.marcarMatriz(cultivo, matriz, false);
+        CultivoUtils.imprimirMatrizMarca(matriz);
+
     }
 
     private static void imprimirMatrizDeRiesgos(double[][] riesgos) {
@@ -157,8 +184,8 @@ public class Main {
         }
     }
 
-    private static void imprimirResultado(List<CultivoSeleccionadoV2> res) {
-        for (CultivoSeleccionadoV2 cultivo : res) {
+    private static void imprimirResultado(List<CultivoSeleccionado> res) {
+        for (CultivoSeleccionado cultivo : res) {
             System.out.println(cultivo);
         }
     }

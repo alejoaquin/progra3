@@ -8,5 +8,5 @@ import Project.models.Marca;
 public interface ManejarMarca {
     // Parametro <marcar> si es true agregamos el cultivo, sino ponemos null
     //ej: M[0][1] = marcar? new Marca(nombre) : null;
-    Marca[][] marcarMatriz(CultivoSeleccionadoV2 cultivo, Marca[][] matrizActual, boolean marcar);
+    void marcarMatriz(CultivoSeleccionadoV2 cultivo, Marca[][] matrizActual, boolean marcar);
 }

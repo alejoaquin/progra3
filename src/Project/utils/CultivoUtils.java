@@ -1,7 +1,7 @@
 package Project.utils;
 
 import Lib.Coordenada;
-import Project.models.CultivoSeleccionadoV2;;
+import Project.models.CultivoSeleccionadoV2;
 import Project.models.Marca;
 
 public class CultivoUtils {

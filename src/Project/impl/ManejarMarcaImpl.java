@@ -1,13 +1,13 @@
 package Project.impl;
 
 import Lib.Coordenada;
-import Lib.CultivoSeleccionado;
 import Project.ManejarMarca;
+import Project.models.CultivoSeleccionadoV2;
 import Project.models.Marca;
 
 public class ManejarMarcaImpl implements ManejarMarca {
     @Override
-    public Marca[][] marcarMatriz(CultivoSeleccionado cultivo, Marca[][] matrizActual, boolean marcar) {
+    public Marca[][] marcarMatriz(CultivoSeleccionadoV2 cultivo, Marca[][] matrizActual, boolean marcar) {
         // Obtener las coordenadas del cultivo
         Coordenada superiorIzquierda = cultivo.getEsquinaSuperiorIzquierda();
         Coordenada inferiorDerecha = cultivo.getEsquinaInferiorDerecha();

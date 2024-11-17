@@ -1,18 +1,17 @@
 package Project.impl;
 
-import Lib.CultivoSeleccionado;
 import Project.Ganancia;
+import Project.models.CultivoSeleccionadoV2;
 
 import java.util.List;
 
 public class GananciaImpl implements Ganancia {
     @Override
-    public double calcularGananciaTotal(List<CultivoSeleccionado> cultivos) {
+    public double calcularGananciaTotal(List<CultivoSeleccionadoV2> cultivos) {
         return 0;
     }
 
     @Override
-    public double calcularGananciaCultivo(CultivoSeleccionado cultivo) {
-        return 0;
+    public void calcularGananciaCultivo(CultivoSeleccionadoV2 cultivo, double[][] riesgos) {
     }
 }

@@ -1,8 +1,8 @@
 package Project.impl;
 
 import Lib.Cultivo;
-import Lib.CultivoSeleccionado;
 import Project.*;
+import Project.models.CultivoSeleccionadoV2;
 import Project.models.ESBacktracking;
 import Project.models.Marca;
 
@@ -26,7 +26,7 @@ public class PlantacionOptimaImpl implements PlantacionOptima {
     public void backtracking(ESBacktracking p) {
         Cultivo cultivo = p.cultivos.get(p.etapa);
 
-        List<CultivoSeleccionado> alternativas = cultivo.getTemporadaOptima().equals(p.temporada) ?
+        List<CultivoSeleccionadoV2> alternativas = cultivo.getTemporadaOptima().equals(p.temporada) ?
                 obtenerAlternativas(p.marcas, cultivo, p.riesgos) :
                 new ArrayList<>();
 
@@ -62,9 +62,9 @@ public class PlantacionOptimaImpl implements PlantacionOptima {
         );
     }
 
-    private List<CultivoSeleccionado> obtenerAlternativas(Marca[][] marcas, Cultivo cultivo, double[][] riesgos) {
+    private List<CultivoSeleccionadoV2> obtenerAlternativas(Marca[][] marcas, Cultivo cultivo, double[][] riesgos) {
         // Generar todas las alternativas válidas para el cultivo actual
-        List<CultivoSeleccionado> alternativas = alternativa.generar(marcas, cultivo, riesgos);
+        List<CultivoSeleccionadoV2> alternativas = alternativa.generar(marcas, cultivo, riesgos);
         // También consideramos la alternativa de no usar el cultivo actual
         alternativas.add(null);
         return alternativas;

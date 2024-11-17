@@ -1,6 +1,6 @@
 import Lib.Coordenada;
 import Lib.Cultivo;
-import Lib.CultivoSeleccionado;
+import Project.models.CultivoSeleccionadoV2;;
 import Lib.PlanificarCultivos;
 import Project.EvaluacionDeAlternativa;
 import Project.impl.EvaluacionDeAlternativaImpl;
@@ -95,7 +95,7 @@ public class Main {
         }
         imprimirMatrizDeRiesgos(riesgos);
 
-        List<CultivoSeleccionado> res = planificador.obtenerPlanificacion(cultivos, riesgos, "Otoño");
+        List<CultivoSeleccionadoV2> res = planificador.obtenerPlanificacion(cultivos, riesgos, "Otoño");
         imprimirResultado(res);
     }
 
@@ -107,7 +107,7 @@ public class Main {
         matriz[0][6] = new Marca("Maíz");
         matriz[4][5] = new Marca("Frijol");
 
-        CultivoSeleccionado cultivo = new CultivoSeleccionado();
+        CultivoSeleccionadoV2 cultivo = new CultivoSeleccionadoV2();
         cultivo.setNombreCultivo("Tomate");
         cultivo.setEsquinaSuperiorIzquierda(new Coordenada(1, 1));
         cultivo.setEsquinaInferiorDerecha(new Coordenada(4, 5));
@@ -133,12 +133,12 @@ public class Main {
         matriz[1][3] = new Marca("Maíz");
 
 
-        CultivoSeleccionado mismoCultivoPlantado = new CultivoSeleccionado();
+        CultivoSeleccionadoV2 mismoCultivoPlantado = new CultivoSeleccionadoV2();
         mismoCultivoPlantado.setNombreCultivo("Maíz");
         mismoCultivoPlantado.setEsquinaSuperiorIzquierda(new Coordenada(0, 0));
         mismoCultivoPlantado.setEsquinaInferiorDerecha(new Coordenada(1, 3));
 
-        CultivoSeleccionado alternativaAEvaluar = new CultivoSeleccionado();
+        CultivoSeleccionadoV2 alternativaAEvaluar = new CultivoSeleccionadoV2();
         alternativaAEvaluar.setNombreCultivo("Maíz");
         alternativaAEvaluar.setEsquinaSuperiorIzquierda(new Coordenada(2, 2));
         alternativaAEvaluar.setEsquinaInferiorDerecha(new Coordenada(3, 9));
@@ -157,8 +157,8 @@ public class Main {
         }
     }
 
-    private static void imprimirResultado(List<CultivoSeleccionado> res) {
-        for (CultivoSeleccionado cultivo : res) {
+    private static void imprimirResultado(List<CultivoSeleccionadoV2> res) {
+        for (CultivoSeleccionadoV2 cultivo : res) {
             System.out.println(cultivo);
         }
     }

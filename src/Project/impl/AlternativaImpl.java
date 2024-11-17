@@ -38,7 +38,7 @@ public class AlternativaImpl implements Alternativa {
                             alternativa.setNombreCultivo(cultivo.getNombre());
                             alternativa.setEsquinaSuperiorIzquierda(new Coordenada(xInicio, yInicio));
                             alternativa.setEsquinaInferiorDerecha(new Coordenada(xFin, yFin));
-                            ganancia.calcularGananciaCultivo(alternativa, riesgos);
+                            ganancia.calcularGananciaCultivo(alternativa, riesgos, cultivo);
 
                             // Agregar la alternativa a la lista
                             alternativas.add(alternativa);

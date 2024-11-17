@@ -1,5 +1,6 @@
 package Project.impl;
 
+import Lib.Cultivo;
 import Project.Ganancia;
 import Project.models.CultivoSeleccionadoV2;
 
@@ -12,6 +13,6 @@ public class GananciaImpl implements Ganancia {
     }
 
     @Override
-    public void calcularGananciaCultivo(CultivoSeleccionadoV2 cultivo, double[][] riesgos) {
+    public void calcularGananciaCultivo(CultivoSeleccionadoV2 seleccionado, double[][] riesgos, Cultivo cultivo) {
     }
 }

@@ -1,8 +1,8 @@
 package Project;
 
-import Project.models.ESBacktracking;
+import Project.models.ESBacktrackingRelleno;
 
 public interface MejorRelleno {
     // Usar mejor ganancia para
-    void calcular(ESBacktracking parametros);
+    void backtracking(ESBacktrackingRelleno p);
 }

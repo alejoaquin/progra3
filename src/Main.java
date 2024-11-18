@@ -2,15 +2,9 @@ import Lib.Coordenada;
 import Lib.Cultivo;
 import Lib.CultivoSeleccionado;
 import Lib.PlanificarCultivos;
-import Project.Alternativa;
-import Project.EvaluacionDeAlternativa;
-import Project.ManejarMarca;
-import Project.PlantacionOptima;
+import Project.*;
 import Project.impl.*;
-import Project.models.Area;
-import Project.models.CultivoSeleccionadoV2;
-import Project.models.ESBacktracking;
-import Project.models.Marca;
+import Project.models.*;
 import Project.utils.CultivoUtils;
 
 import java.util.ArrayList;
@@ -20,7 +14,121 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        testAlternativaRelleno();
+        testBacktrackingConRelleno();
+
+    }
+
+    private static void testBacktrackingConRelleno() {
+        long startTime = System.currentTimeMillis();
+        System.out.println("startTime: " + startTime);
+        PlantacionOptima plantacionOptima = new PlantacionOptimaImpl();
+        List<Cultivo> cultivos = new ArrayList<>();
+
+        Cultivo cultivo = new Cultivo();
+        cultivo.setNombre("Lechuga");
+        cultivo.setCostoPorParcela(1);
+        cultivo.setInversionRequerida(1);
+        cultivo.setPrecioDeVentaPorParcela(500);
+        cultivo.setTemporadaOptima("Otoño");
+        cultivos.add(cultivo);
+
+        cultivo = new Cultivo();
+        cultivo.setNombre("Remolacha");
+        cultivo.setCostoPorParcela(1);
+        cultivo.setInversionRequerida(1);
+        cultivo.setPrecioDeVentaPorParcela(450);
+        cultivo.setTemporadaOptima("Otoño");
+        cultivos.add(cultivo);
+
+        cultivo = new Cultivo();
+        cultivo.setNombre("Calabaza");
+        cultivo.setCostoPorParcela(1);
+        cultivo.setInversionRequerida(1);
+        cultivo.setPrecioDeVentaPorParcela(475);
+        cultivo.setTemporadaOptima("Otoño");
+        cultivos.add(cultivo);
+
+        cultivo = new Cultivo();
+        cultivo.setNombre("Tomate");
+        cultivo.setCostoPorParcela(1);
+        cultivo.setInversionRequerida(1);
+        cultivo.setPrecioDeVentaPorParcela(600);
+        cultivo.setTemporadaOptima("Verano");
+        cultivos.add(cultivo);
+
+        cultivo = new Cultivo();
+        cultivo.setNombre("Zanahoria");
+        cultivo.setCostoPorParcela(1);
+        cultivo.setInversionRequerida(1);
+        cultivo.setPrecioDeVentaPorParcela(430);
+        cultivo.setTemporadaOptima("Primavera");
+        cultivos.add(cultivo);
+
+        cultivo = new Cultivo();
+        cultivo.setNombre("Maíz");
+        cultivo.setCostoPorParcela(1);
+        cultivo.setInversionRequerida(1);
+        cultivo.setPrecioDeVentaPorParcela(580);
+        cultivo.setTemporadaOptima("Verano");
+        cultivos.add(cultivo);
+
+        cultivo = new Cultivo();
+        cultivo.setNombre("Espinaca");
+        cultivo.setCostoPorParcela(1);
+        cultivo.setInversionRequerida(1);
+        cultivo.setPrecioDeVentaPorParcela(460);
+        cultivo.setTemporadaOptima("Invierno");
+        cultivos.add(cultivo);
+
+        cultivo = new Cultivo();
+        cultivo.setNombre("Brócoli");
+        cultivo.setCostoPorParcela(1);
+        cultivo.setInversionRequerida(1);
+        cultivo.setPrecioDeVentaPorParcela(510);
+        cultivo.setTemporadaOptima("Otoño");
+        cultivos.add(cultivo);
+
+        int size = 4;
+
+        double[][] riesgos = new double[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                riesgos[i][j] = (i + j) / 200.0;
+                // System.out.print(riesgos[i][j] + "\t");
+            }
+            // System.out.print("\n");
+        }
+        List<CultivoSeleccionadoV2> cultivosResultado = new ArrayList<>();
+        List<CultivoSeleccionadoV2> cultivosParcial = new ArrayList<>();
+        Marca[][] marcas = new Marca[size][size];
+
+
+        ESBacktracking parametro = new ESBacktracking(
+                cultivosResultado,
+                cultivosParcial,
+                marcas,
+                riesgos,
+                "Verano",
+                cultivos,
+                0,
+                0
+        );
+
+
+        plantacionOptima.backtracking(parametro);
+        imprimirResultado(parametro.cultivosResultado);
+
+        long endTime = System.currentTimeMillis();
+        long durationInMillis = endTime - startTime;
+
+        // Conversión a diferentes unidades
+        double seconds = durationInMillis / 1000.0;
+        double minutes = seconds / 60.0;
+
+        System.out.println("Tiempo de ejecución:");
+        System.out.printf("Milisegundos: %d ms%n", durationInMillis);
+        System.out.printf("Segundos: %.2f s%n", seconds);
+        System.out.printf("Minutos: %.2f min%n", minutes);
 
     }
 
@@ -123,6 +231,98 @@ public class Main {
         plantacionOptima.backtracking(parametro);
         imprimirResultado(parametro.cultivosResultado);
 
+    }
+
+    private static void testBacktrackingRelleno() {
+        long startTime = System.currentTimeMillis();
+        int size = 3;
+        AreaNiveles areaNiveles = new AreaNivelesImpl();
+        MejorRelleno mejorRelleno = new MejorRellenoImpl();
+        List<Cultivo> cultivos = new ArrayList<>();
+
+        Cultivo cultivo = new Cultivo();
+        cultivo.setNombre("Tomate");
+        cultivo.setCostoPorParcela(1);
+        cultivo.setInversionRequerida(1);
+        cultivo.setPrecioDeVentaPorParcela(600);
+        cultivo.setTemporadaOptima("Verano");
+        cultivos.add(cultivo);
+
+        cultivo = new Cultivo();
+        cultivo.setNombre("Maíz");
+        cultivo.setCostoPorParcela(1);
+        cultivo.setInversionRequerida(1);
+        cultivo.setPrecioDeVentaPorParcela(580);
+        cultivo.setTemporadaOptima("Verano");
+        cultivos.add(cultivo);
+
+        Marca[][] matriz = new Marca[size][size];
+        matriz[0][0] = new Marca("Maíz");
+        //matriz[3][3] = new Marca("Tomate");
+
+        double[][] riesgos = new double[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                riesgos[i][j] = (i + j) / 200.0;
+                //System.out.print(riesgos[i][j] + "\t");
+            }
+            //System.out.print("\n");
+        }
+
+
+        List<CultivoSeleccionadoV2> cultivosResultado = new ArrayList<>();
+
+        CultivoSeleccionadoV2 cultivoSeleccionado = new CultivoSeleccionadoV2();
+//        cultivoSeleccionado.setNombreCultivo("Tomate");
+//        cultivoSeleccionado.setEsquinaInferiorDerecha(new Coordenada(3, 3));
+//        cultivoSeleccionado.setEsquinaSuperiorIzquierda(new Coordenada(3, 3));
+//        cultivoSeleccionado.setMontoInvertido(2);
+//        cultivoSeleccionado.setRiesgoAsociado(0.03);
+//        cultivoSeleccionado.setGananciaObtenida(600);
+//        cultivosResultado.add(cultivoSeleccionado);
+
+        cultivoSeleccionado = new CultivoSeleccionadoV2();
+        cultivoSeleccionado.setNombreCultivo("Maíz");
+        cultivoSeleccionado.setEsquinaInferiorDerecha(new Coordenada(0, 0));
+        cultivoSeleccionado.setEsquinaSuperiorIzquierda(new Coordenada(0, 0));
+        cultivoSeleccionado.setMontoInvertido(2);
+        cultivoSeleccionado.setRiesgoAsociado(0);
+        cultivoSeleccionado.setGananciaObtenida(580);
+        cultivosResultado.add(cultivoSeleccionado);
+
+
+        List<CultivoSeleccionadoV2> rellenoResultado = new ArrayList<>(cultivosResultado);
+        List<CultivoSeleccionadoV2> rellenoParcial = new ArrayList<>(cultivosResultado);
+
+        List<Area> areas = areaNiveles.generar(size, size);
+
+        ESBacktrackingRelleno parametro = new ESBacktrackingRelleno(
+                rellenoParcial,
+                rellenoResultado,
+                matriz,
+                riesgos,
+                cultivos,
+                0,
+                580,
+                null,
+                areas
+        );
+
+        System.out.println("Llamando mejorRelleno.backtracking");
+        mejorRelleno.backtracking(parametro);
+        imprimirResultado(parametro.rellenoResultado);
+
+        long endTime = System.currentTimeMillis();
+        long durationInMillis = endTime - startTime;
+
+        // Conversión a diferentes unidades
+        double seconds = durationInMillis / 1000.0;
+        double minutes = seconds / 60.0;
+
+        System.out.println("Tiempo de ejecución:");
+        System.out.printf("Milisegundos: %d ms%n", durationInMillis);
+        System.out.printf("Segundos: %.2f s%n", seconds);
+        System.out.printf("Minutos: %.2f min%n", minutes);
     }
 
     //ToDo: poner devuelta en el main para la entrega
@@ -264,7 +464,6 @@ public class Main {
         System.out.println("Es válido: " + esValido);
         CultivoUtils.imprimirMatrizConColision(matriz, alternativaAEvaluar);
     }
-
 
     private static void testAlternativaRelleno() {
         Alternativa alternativa = new AlternativaImpl();

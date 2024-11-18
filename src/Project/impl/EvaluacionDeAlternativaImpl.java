@@ -2,6 +2,7 @@ package Project.impl;
 
 import Lib.Coordenada;
 import Project.EvaluacionDeAlternativa;
+import Project.ManejarMarca;
 import Project.models.CultivoSeleccionadoV2;
 import Project.models.Marca;
 import Project.models.Rectangulo;
@@ -9,9 +10,8 @@ import Project.models.Rectangulo;
 import java.util.ArrayList;
 import java.util.List;
 
-import static Project.utils.CultivoUtils.imprimirRectangulo;
-
 public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
+    ManejarMarca manejarMarca = new ManejarMarcaImpl();
 
     @Override
     public boolean esValida(Marca[][] marcas, CultivoSeleccionadoV2 alternativa) {
@@ -64,23 +64,34 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
             return false;
         }
 
+        // Verificar si todas las posiciones dentro del área están libres
+        for (int i = xInicio; i <= xFin; i++) {
+            for (int j = yInicio; j <= yFin; j++) {
+                if (marcas[i][j] != null) { // Si hay un cultivo ya plantado
+                    return false;
+                }
+            }
+        }
+
+        manejarMarca.marcarMatriz(alternativaAEvaluar, marcas, true);
+
         List<Coordenada> esquinasSuperioresIzquierda = generarCoordenadasSuperiorIzquierda(marcas, xInicio, yInicio, xFin, yFin, nombreCultivo);
         esquinasSuperioresIzquierda.add(superiorIzquierda);
-        List<Coordenada> esquinasInferioresDerecha = generarCoordenadasInferiorIdquierda(marcas, xInicio, yInicio, xFin, yFin, nombreCultivo);
+        List<Coordenada> esquinasInferioresDerecha = generarCoordenadasInferiorDerecha(marcas, xInicio, yInicio, xFin, yFin, nombreCultivo);
         esquinasInferioresDerecha.add(inferiorDerecha);
 
         // Verificamos las adyacencias para formar nuevos rectángulos
         List<Rectangulo> rectangulosNuevos = generarRectangulosConCoordenadas(esquinasSuperioresIzquierda, esquinasInferioresDerecha, marcas, nombreCultivo);
 
-        System.out.println("Cantidad de rectangulosNuevos: " + rectangulosNuevos.size());
         // Verificar si cada rectángulo cumple con la condición
         for (Rectangulo rect : rectangulosNuevos) {
-            imprimirRectangulo(rect, marcas, rectangulosNuevos.indexOf(rect));
+            //imprimirRectangulo(rect, marcas, rectangulosNuevos.indexOf(rect));
             if (rect.getLongitudHorizontal() + rect.getLongitudVertical() > 11) {
+                manejarMarca.marcarMatriz(alternativaAEvaluar, marcas, false);
                 return false;  // Si alguna adyacencia es inválida, retornar false
             }
         }
-
+        manejarMarca.marcarMatriz(alternativaAEvaluar, marcas, false);
         return true;  // Si todas las adyacencias son válidas
     }
 
@@ -106,7 +117,6 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
                 if (xInicio > xFin || yInicio > yFin) {
                     continue; // Si las coordenadas no forman un rectángulo válido, se descarta esta combinación
                 }
-
                 // Verificar si el área del rectángulo está completamente ocupada por el cultivo y no tiene celdas vacías
                 if (esAreaLlenadaConCultivo(marcas, xInicio, yInicio, xFin, yFin, nombreCultivo)) {
                     // Si el área está completamente ocupada por el cultivo, creamos el rectángulo
@@ -123,7 +133,6 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
     private boolean esAreaLlenadaConCultivo(Marca[][] marcas, int xInicio, int yInicio, int xFin, int yFin, String nombreCultivo) {
         for (int i = xInicio; i <= xFin; i++) {
             for (int j = yInicio; j <= yFin; j++) {
-                // Si la celda está vacía o no es del mismo cultivo, retornar false
                 if (marcas[i][j] == null || !marcas[i][j].nombre.equals(nombreCultivo)) {
                     return false;
                 }
@@ -136,23 +145,22 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
         List<Coordenada> coordenadas = new ArrayList<>();
 
         // Recorrer posibles adyacencias horizontales hacia la izquierda
-        if (yInicio != 0) {
+        if (yInicio > 0) {
             for (int i = xInicio; i <= xFin; i++) {
                 for (int j = yInicio - 1; j >= 0; j--) {
                     if (marcas[i][j] != null && marcas[i][j].nombre.equals(nombreCultivo)) {
-                        Coordenada nueva = new Coordenada(i, j);
-                        coordenadas.add(nueva);
+                        coordenadas.add(new Coordenada(i, j));
                     }
                 }
             }
         }
 
-        if (xInicio != 0) {
+        // Recorrer hacia la parte izquierda (celdas arriba)
+        if (xInicio > 0) {
             for (int j = yInicio; j <= yFin; j++) {
                 for (int i = xInicio - 1; i >= 0; i--) {
                     if (marcas[i][j] != null && marcas[i][j].nombre.equals(nombreCultivo)) {
-                        Coordenada nueva = new Coordenada(i, j);
-                        coordenadas.add(nueva);
+                        coordenadas.add(new Coordenada(i, j));
                     }
                 }
             }
@@ -161,29 +169,28 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
         return coordenadas;
     }
 
-    private List<Coordenada> generarCoordenadasInferiorIdquierda(Marca[][] marcas, int xInicio, int yInicio, int xFin, int yFin, String nombreCultivo) {
+    private List<Coordenada> generarCoordenadasInferiorDerecha(Marca[][] marcas, int xInicio, int yInicio, int xFin, int yFin, String nombreCultivo) {
         List<Coordenada> coordenadas = new ArrayList<>();
-        int logitudMatrizX = marcas.length;
-        int logitudMatrizY = marcas[0].length;
+        int longitudMatrizX = marcas.length;
+        int longitudMatrizY = marcas[0].length;
 
         // Recorrer posibles adyacencias horizontales hacia la izquierda
-        if (yInicio != logitudMatrizY) {
+        if (yFin < longitudMatrizY - 1) {
             for (int i = xInicio; i <= xFin; i++) {
-                for (int j = yFin + 1; j <= logitudMatrizY; j++) {
+                for (int j = yFin + 1; j < longitudMatrizY; j++) {
                     if (marcas[i][j] != null && marcas[i][j].nombre.equals(nombreCultivo)) {
-                        Coordenada nueva = new Coordenada(i, j);
-                        coordenadas.add(nueva);
+                        coordenadas.add(new Coordenada(i, j));
                     }
                 }
             }
         }
 
-        if (xInicio != logitudMatrizX) {
+        // Recorrer hacia la derecha (celdas hacia abajo)
+        if (xFin < longitudMatrizX - 1) {
             for (int j = yInicio; j <= yFin; j++) {
-                for (int i = xFin + 1; i <= logitudMatrizX; i++) {
+                for (int i = xFin + 1; i < longitudMatrizX; i++) {
                     if (marcas[i][j] != null && marcas[i][j].nombre.equals(nombreCultivo)) {
-                        Coordenada nueva = new Coordenada(i, j);
-                        coordenadas.add(nueva);
+                        coordenadas.add(new Coordenada(i, j));
                     }
                 }
             }
@@ -191,5 +198,4 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
 
         return coordenadas;
     }
-
 }

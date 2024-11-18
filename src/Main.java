@@ -246,13 +246,18 @@ public class Main {
         matriz[5][3] = new Marca("Maíz");
         matriz[5][4] = new Marca("Maíz");
 
+        // Descomentar para probar uno no valido
+//        matriz[2][0] = new Marca("Maíz");
+//        matriz[3][0] = new Marca("Maíz");
+//        matriz[2][1] = new Marca("Maíz");
+//        matriz[3][1] = new Marca("Maíz");
+
         CultivoSeleccionadoV2 alternativaAEvaluar = new CultivoSeleccionadoV2();
         alternativaAEvaluar.setNombreCultivo("Maíz");
         alternativaAEvaluar.setEsquinaSuperiorIzquierda(new Coordenada(2, 2));
         alternativaAEvaluar.setEsquinaInferiorDerecha(new Coordenada(3, 9));
         boolean esValido = evaluador.esRellenoValido(matriz, alternativaAEvaluar);
         System.out.println("Es válido: " + esValido);
-        System.out.println("MatrizConColision");
         CultivoUtils.imprimirMatrizConColision(matriz, alternativaAEvaluar);
     }
 

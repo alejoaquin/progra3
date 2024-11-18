@@ -5,11 +5,14 @@ import Lib.Cultivo;
 import Project.Alternativa;
 import Project.EvaluacionDeAlternativa;
 import Project.Ganancia;
+import Project.models.Area;
 import Project.models.CultivoSeleccionadoV2;
 import Project.models.Marca;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class AlternativaImpl implements Alternativa {
     private EvaluacionDeAlternativa evaluacionDeAlternativa = new EvaluacionDeAlternativaImpl();
@@ -50,6 +53,32 @@ public class AlternativaImpl implements Alternativa {
         return alternativas.stream()
                 .filter(alt -> evaluacionDeAlternativa.esValida(marca, alt))
                 .toList();
+    }
+
+    @Override
+    public List<CultivoSeleccionadoV2> generarAlternativaRelleno(Marca[][] marcas, List<Cultivo> cultivos, double[][] riesgos, Area area, String cultivoDeRelleno) {
+        // Si no es nulo iteramos la lista y convertimos a seleccionados
+        // Sino convertimos a seleccionado sólo el cultivo de relleno
+
+        return cultivos.stream()
+                .filter(c -> Objects.isNull(cultivoDeRelleno) || c.getNombre().equals(cultivoDeRelleno))
+                .map(c -> convertirASeleccionado(c, area, riesgos))
+                .filter(c -> evaluacionDeAlternativa.esRellenoValido(marcas, c))
+                .peek(c -> calcularGanancia(riesgos, c, cultivos))
+                .collect(Collectors.toList());
+    }
+
+    private CultivoSeleccionadoV2 convertirASeleccionado(Cultivo cultivo, Area area, double[][] riesgos) {
+        CultivoSeleccionadoV2 seleccion = new CultivoSeleccionadoV2();
+        seleccion.setNombreCultivo(cultivo.getNombre());
+        seleccion.setEsquinaSuperiorIzquierda(area.getEsquinaSuperiorIzquierda());
+        seleccion.setEsquinaInferiorDerecha(area.getEsquinaInferiorDerecha());
+        return seleccion;
+    }
+
+    private void calcularGanancia(double[][] riesgos, CultivoSeleccionadoV2 seleccion, List<Cultivo> cultivos) {
+        Cultivo cultivo = cultivos.stream().filter(c -> c.getNombre().equals(seleccion.getNombreCultivo())).findFirst().orElse(null);
+        ganancia.calcularGananciaCultivo(seleccion, riesgos, cultivo);
     }
 }
 

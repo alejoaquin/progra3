@@ -2,13 +2,12 @@ import Lib.Coordenada;
 import Lib.Cultivo;
 import Lib.CultivoSeleccionado;
 import Lib.PlanificarCultivos;
+import Project.Alternativa;
 import Project.EvaluacionDeAlternativa;
 import Project.ManejarMarca;
 import Project.PlantacionOptima;
-import Project.impl.EvaluacionDeAlternativaImpl;
-import Project.impl.ManejarMarcaImpl;
-import Project.impl.PlanificarCultivosImpl;
-import Project.impl.PlantacionOptimaImpl;
+import Project.impl.*;
+import Project.models.Area;
 import Project.models.CultivoSeleccionadoV2;
 import Project.models.ESBacktracking;
 import Project.models.Marca;
@@ -21,7 +20,8 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        testBacktracking();
+        testAlternativaRelleno();
+
     }
 
     //ToDo: poner devuelta en el main para la entrega
@@ -263,6 +263,72 @@ public class Main {
         boolean esValido = evaluador.esRellenoValido(matriz, alternativaAEvaluar);
         System.out.println("Es válido: " + esValido);
         CultivoUtils.imprimirMatrizConColision(matriz, alternativaAEvaluar);
+    }
+
+
+    private static void testAlternativaRelleno() {
+        Alternativa alternativa = new AlternativaImpl();
+
+        Marca[][] matriz = new Marca[10][10];
+        matriz[0][0] = new Marca("Maíz");
+        matriz[0][1] = new Marca("Maíz");
+        matriz[0][2] = new Marca("Maíz");
+        matriz[0][3] = new Marca("Maíz");
+        matriz[1][0] = new Marca("Maíz");
+        matriz[1][1] = new Marca("Maíz");
+        matriz[1][2] = new Marca("Maíz");
+        matriz[1][3] = new Marca("Maíz");
+
+        matriz[4][3] = new Marca("Maíz");
+        matriz[4][4] = new Marca("Maíz");
+        matriz[5][3] = new Marca("Maíz");
+        matriz[5][4] = new Marca("Maíz");
+
+        // Descomentar para probar uno no valido
+        matriz[2][0] = new Marca("Maíz");
+        matriz[3][0] = new Marca("Maíz");
+        matriz[2][1] = new Marca("Maíz");
+        matriz[3][1] = new Marca("Maíz");
+
+
+        CultivoUtils.imprimirMatrizMarca(matriz);
+
+        List<Cultivo> cultivos = new ArrayList<>();
+
+        Cultivo cultivo = new Cultivo();
+
+        cultivo = new Cultivo();
+        cultivo.setNombre("Maíz");
+        cultivo.setCostoPorParcela(1);
+        cultivo.setInversionRequerida(1);
+        cultivo.setPrecioDeVentaPorParcela(580);
+        cultivo.setTemporadaOptima("Verano");
+        cultivos.add(cultivo);
+
+        cultivo = new Cultivo();
+        cultivo.setNombre("Espinaca");
+        cultivo.setCostoPorParcela(1);
+        cultivo.setInversionRequerida(1);
+        cultivo.setPrecioDeVentaPorParcela(460);
+        cultivo.setTemporadaOptima("Verano");
+        cultivos.add(cultivo);
+
+        int size = 10;
+
+        double[][] riesgos = new double[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                riesgos[i][j] = (i + j) / 200.0;
+            }
+        }
+
+        Area area = new Area(new Coordenada(2, 2), new Coordenada(3, 9));
+        System.out.println("Calculando alternativas");
+        List<CultivoSeleccionadoV2> cultivoSeleccionadoV2s = alternativa.generarAlternativaRelleno(matriz, cultivos, riesgos, area, "Maiz");
+        imprimirResultado(cultivoSeleccionadoV2s);
+
+        //CultivoUtils.imprimirMatrizConColision(matriz, cultivoSeleccionadoV2s.get(0));
+
     }
 
     //ToDo: eliminar esto para la entrega

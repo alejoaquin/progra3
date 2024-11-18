@@ -4,9 +4,12 @@ import Lib.Coordenada;
 import Project.EvaluacionDeAlternativa;
 import Project.models.CultivoSeleccionadoV2;
 import Project.models.Marca;
+import Project.models.Rectangulo;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static Project.utils.CultivoUtils.imprimirRectangulo;
 
 public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
 
@@ -43,8 +46,8 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
     }
 
     @Override
-    public boolean esRellenoValido(Marca[][] marcas, List<CultivoSeleccionadoV2> mismoCultivoPlantado, CultivoSeleccionadoV2 alternativaAEvaluar) {
-        // Obtener las coordenadas del cultivo a evaluar
+    public boolean esRellenoValido(Marca[][] marcas, CultivoSeleccionadoV2 alternativaAEvaluar) {
+        // Obtener las coordenadas del cultivo que se evalúa
         Coordenada superiorIzquierda = alternativaAEvaluar.getEsquinaSuperiorIzquierda();
         Coordenada inferiorDerecha = alternativaAEvaluar.getEsquinaInferiorDerecha();
 
@@ -54,169 +57,139 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
         int yFin = inferiorDerecha.getY();
         String nombreCultivo = alternativaAEvaluar.getNombreCultivo();
 
-        // Verificar si la suma de longitudes horizontal y vertical no supera 11
+        // Verificar que la longitud horizontal + la longitud vertical no exceda 11
         int longitudHorizontal = xFin - xInicio + 1;
         int longitudVertical = yFin - yInicio + 1;
         if (longitudHorizontal + longitudVertical > 11) {
-            return false;  // No cumple la restricción de longitud total
+            return false;
         }
 
-        // Si no hay cultivo plantado, verificamos solo la nueva alternativa
-        if (mismoCultivoPlantado == null) {
-            return verificarPosicionesLibres(marcas, xInicio, yInicio, xFin, yFin, nombreCultivo);
+        List<Coordenada> esquinasSuperioresIzquierda = generarCoordenadasSuperiorIzquierda(marcas, xInicio, yInicio, xFin, yFin, nombreCultivo);
+        esquinasSuperioresIzquierda.add(superiorIzquierda);
+        List<Coordenada> esquinasInferioresDerecha = generarCoordenadasInferiorIdquierda(marcas, xInicio, yInicio, xFin, yFin, nombreCultivo);
+        esquinasInferioresDerecha.add(inferiorDerecha);
+
+        // Verificamos las adyacencias para formar nuevos rectángulos
+        List<Rectangulo> rectangulosNuevos = generarRectangulosConCoordenadas(esquinasSuperioresIzquierda, esquinasInferioresDerecha, marcas, nombreCultivo);
+
+        System.out.println("Cantidad de rectangulosNuevos: " + rectangulosNuevos.size());
+        // Verificar si cada rectángulo cumple con la condición
+        for (Rectangulo rect : rectangulosNuevos) {
+            imprimirRectangulo(rect, marcas, rectangulosNuevos.indexOf(rect));
+            if (rect.getLongitudHorizontal() + rect.getLongitudVertical() > 11) {
+                return false;  // Si alguna adyacencia es inválida, retornar false
+            }
         }
 
-        // Si hay un cultivo plantado, verificamos la adyacencia entre ambos cultivos
-//        Coordenada superiorIzquierdaPlantado = mismoCultivoPlantado.getEsquinaSuperiorIzquierda();
-//        Coordenada inferiorDerechaPlantado = mismoCultivoPlantado.getEsquinaInferiorDerecha();
-//
-//        int xInicioPlantado = superiorIzquierdaPlantado.getX();
-//        int yInicioPlantado = superiorIzquierdaPlantado.getY();
-//        int xFinPlantado = inferiorDerechaPlantado.getX();
-//        int yFinPlantado = inferiorDerechaPlantado.getY();
-//
-//        boolean esAdyacenteEnX = hayAdyacencia(xInicio, xFin, xInicioPlantado, xFinPlantado);
-//        boolean esAdyacenteEnY = hayAdyacencia(yInicio, yFin, yInicioPlantado, yFinPlantado);
-//
-//        // Verificar la longitud de la adyacencia combinada
-//        if (esAdyacenteEnX || esAdyacenteEnY) {
-//            //ToDo: chequear si se suma sólo el eje adyacente o es total
-//            int longitudXAdyacente = calcularLongitudAdyacente(xInicio, xFin, xInicioPlantado, xFinPlantado, esAdyacenteEnX);
-//            int longitudYAdyacente = calcularLongitudAdyacente(yInicio, yFin, yInicioPlantado, yFinPlantado, esAdyacenteEnY);
-//            int longitudTotalAdyacente = longitudXAdyacente + longitudYAdyacente;
-//            // Si la longitud total de la adyacencia excede 11, no es válido
-//            if (longitudTotalAdyacente > 11) {
-//                return false;
-//            }
-//        }
-
-        // Verificar las posiciones ocupadas por otros cultivos y la adyacencia
-        return verificarPosicionesLibres(marcas, xInicio, yInicio, xFin, yFin, nombreCultivo);
+        return true;  // Si todas las adyacencias son válidas
     }
 
-    // Verificar si las posiciones dentro del área están libres o adyacentes
-    private boolean verificarPosicionesLibres(Marca[][] marcas, int xInicio, int yInicio, int xFin, int yFin, String nombreCultivo) {
+    // Generar los rectángulos adyacentes posibles
+    public List<Rectangulo> generarRectangulosConCoordenadas(List<Coordenada> esquinasSuperioresIzquierda,
+                                                             List<Coordenada> esquinasInferioresDerecha,
+                                                             Marca[][] marcas,
+                                                             String nombreCultivo) {
+        List<Rectangulo> rectangulosValidos = new ArrayList<>();
+
+        // Recorrer todas las combinaciones entre las EsquinasSuperioresIzquierda y EsquinasInferioresDerecha
+        for (int i = 0; i < esquinasSuperioresIzquierda.size(); i++) {
+            for (int j = 0; j < esquinasInferioresDerecha.size(); j++) {
+                Coordenada esquinaSuperiorIzquierda = esquinasSuperioresIzquierda.get(i);
+                Coordenada esquinaInferiorDerecha = esquinasInferioresDerecha.get(j);
+
+                int xInicio = esquinaSuperiorIzquierda.getX();
+                int yInicio = esquinaSuperiorIzquierda.getY();
+                int xFin = esquinaInferiorDerecha.getX();
+                int yFin = esquinaInferiorDerecha.getY();
+
+                // Filtrar combinaciones incompatibles: la esquina superior izquierda debe estar por encima y a la izquierda de la esquina inferior derecha
+                if (xInicio > xFin || yInicio > yFin) {
+                    continue; // Si las coordenadas no forman un rectángulo válido, se descarta esta combinación
+                }
+
+                // Verificar si el área del rectángulo está completamente ocupada por el cultivo y no tiene celdas vacías
+                if (esAreaLlenadaConCultivo(marcas, xInicio, yInicio, xFin, yFin, nombreCultivo)) {
+                    // Si el área está completamente ocupada por el cultivo, creamos el rectángulo
+                    Rectangulo rect = new Rectangulo(xInicio, yInicio, xFin, yFin);
+                    rectangulosValidos.add(rect); // Añadimos el rectángulo válido a la lista
+                }
+            }
+        }
+
+        return rectangulosValidos;
+    }
+
+    // Método para verificar si el área está completamente ocupada por el mismo cultivo (sin celdas vacías)
+    private boolean esAreaLlenadaConCultivo(Marca[][] marcas, int xInicio, int yInicio, int xFin, int yFin, String nombreCultivo) {
         for (int i = xInicio; i <= xFin; i++) {
             for (int j = yInicio; j <= yFin; j++) {
-                // Verificar si la posición está ocupada por otro cultivo
-                if (marcas[i][j] != null && !marcas[i][j].nombre.equals(nombreCultivo)) {
-                    return false; // Colisión con otro cultivo
+                // Si la celda está vacía o no es del mismo cultivo, retornar false
+                if (marcas[i][j] == null || !marcas[i][j].nombre.equals(nombreCultivo)) {
+                    return false;
                 }
             }
         }
-        return true; // No hay colisión
+        return true;  // Si todas las celdas están ocupadas por el mismo cultivo
     }
 
-    private boolean hayAdyacencia(int alternativaInicio, int alternativaFin, int inicioPlantado, int finPlantado) {
-        return Math.abs(alternativaInicio - finPlantado) == 1 || Math.abs(inicioPlantado - alternativaFin) == 1;
-    }
+    private List<Coordenada> generarCoordenadasSuperiorIzquierda(Marca[][] marcas, int xInicio, int yInicio, int xFin, int yFin, String nombreCultivo) {
+        List<Coordenada> coordenadas = new ArrayList<>();
 
-    private void recorrerPuntosAdyacentes(Marca[][] marcas, CultivoSeleccionadoV2 alternativa) {
-        // Obtener las coordenadas del cultivo a evaluar
-        Coordenada superiorIzquierda = alternativa.getEsquinaSuperiorIzquierda();
-        Coordenada inferiorDerecha = alternativa.getEsquinaInferiorDerecha();
-
-        int xInicio = superiorIzquierda.getX();
-        int yInicio = superiorIzquierda.getY();
-        int xFin = inferiorDerecha.getX();
-        int yFin = inferiorDerecha.getY();
-
-        List<Coordenada> adyacentesArriba = new ArrayList<>();
-        List<Coordenada> adyacentesAbajo = new ArrayList<>();
-        List<Coordenada> adyacentesIzquierda = new ArrayList<>();
-        List<Coordenada> adyacentesDerecha = new ArrayList<>();
-    }
-
-    private boolean hayAdyacenteSuperiorX(Marca[][] marcas, Coordenada coordenada, String nombreCultivo) {
-        return nombreCultivo.equals(marcas[coordenada.getX() + 1][coordenada.getY()].nombre);
-    }
-
-    private boolean hayAdyacenteSuperiorY(Marca[][] marcas, Coordenada coordenada, String nombreCultivo) {
-        return nombreCultivo.equals(marcas[coordenada.getX()][coordenada.getY() + 1].nombre);
-    }
-
-    private boolean hayAdyacenteInferiorX(Marca[][] marcas, Coordenada coordenada, String nombreCultivo) {
-        return nombreCultivo.equals(marcas[coordenada.getX() - 1][coordenada.getY()].nombre);
-    }
-
-    private boolean hayAdyacenteInferiorY(Marca[][] marcas, Coordenada coordenada, String nombreCultivo) {
-        return nombreCultivo.equals(marcas[coordenada.getX()][coordenada.getY() - 1].nombre);
-    }
-
-    private List<Coordenada> obtenerCordenadasAdyacentesDerecha(Marca[][] marcas, CultivoSeleccionadoV2 alternativa) {
-        List<Coordenada> adyacentesDerecha = new ArrayList<>();
-
-        int xInicio = alternativa.getEsquinaSuperiorIzquierda().getX();
-        int xFin = alternativa.getEsquinaInferiorDerecha().getX();
-        int yFin = alternativa.getEsquinaInferiorDerecha().getY();
-
-        if (yFin + 1 < marcas[0].length) {
+        // Recorrer posibles adyacencias horizontales hacia la izquierda
+        if (yInicio != 0) {
             for (int i = xInicio; i <= xFin; i++) {
-                if (alternativa.getNombreCultivo().equals(marcas[i][yFin + 1].nombre)) {
-                    Coordenada coordenada = new Coordenada(i, yFin + 1);
-                    adyacentesDerecha.add(coordenada);
+                for (int j = yInicio - 1; j >= 0; j--) {
+                    if (marcas[i][j] != null && marcas[i][j].nombre.equals(nombreCultivo)) {
+                        Coordenada nueva = new Coordenada(i, j);
+                        coordenadas.add(nueva);
+                    }
                 }
             }
         }
 
-        return adyacentesDerecha;
+        if (xInicio != 0) {
+            for (int j = yInicio; j <= yFin; j++) {
+                for (int i = xInicio - 1; i >= 0; i--) {
+                    if (marcas[i][j] != null && marcas[i][j].nombre.equals(nombreCultivo)) {
+                        Coordenada nueva = new Coordenada(i, j);
+                        coordenadas.add(nueva);
+                    }
+                }
+            }
+        }
+
+        return coordenadas;
     }
 
-    private List<Coordenada> obtenerCordenadasAdyacentesIzquierda(Marca[][] marcas, CultivoSeleccionadoV2 alternativa) {
-        List<Coordenada> adyacentesIzquierda = new ArrayList<>();
+    private List<Coordenada> generarCoordenadasInferiorIdquierda(Marca[][] marcas, int xInicio, int yInicio, int xFin, int yFin, String nombreCultivo) {
+        List<Coordenada> coordenadas = new ArrayList<>();
+        int logitudMatrizX = marcas.length;
+        int logitudMatrizY = marcas[0].length;
 
-        int xInicio = alternativa.getEsquinaSuperiorIzquierda().getX();
-        int xFin = alternativa.getEsquinaInferiorDerecha().getX();
-        int yInicio = alternativa.getEsquinaSuperiorIzquierda().getY();
-
-        if (yInicio - 1 >= 0) {
+        // Recorrer posibles adyacencias horizontales hacia la izquierda
+        if (yInicio != logitudMatrizY) {
             for (int i = xInicio; i <= xFin; i++) {
-                if (alternativa.getNombreCultivo().equals(marcas[i][yInicio - 1].nombre)) {
-                    Coordenada coordenada = new Coordenada(i, yInicio - 1);
-                    adyacentesIzquierda.add(coordenada);
+                for (int j = yFin + 1; j <= logitudMatrizY; j++) {
+                    if (marcas[i][j] != null && marcas[i][j].nombre.equals(nombreCultivo)) {
+                        Coordenada nueva = new Coordenada(i, j);
+                        coordenadas.add(nueva);
+                    }
                 }
             }
         }
 
-        return adyacentesIzquierda;
-    }
-
-    private List<Coordenada> obtenerCordenadasAdyacentesArriba(Marca[][] marcas, CultivoSeleccionadoV2 alternativa) {
-        List<Coordenada> adyacentesArriba = new ArrayList<>();
-
-        int yInicio = alternativa.getEsquinaSuperiorIzquierda().getY();
-        int yFin = alternativa.getEsquinaInferiorDerecha().getY();
-        int xInicio = alternativa.getEsquinaSuperiorIzquierda().getX();
-
-        if (xInicio - 1 >= 0) {
+        if (xInicio != logitudMatrizX) {
             for (int j = yInicio; j <= yFin; j++) {
-                if (alternativa.getNombreCultivo().equals(marcas[xInicio - 1][j].nombre)) {
-                    Coordenada coordenada = new Coordenada(xInicio - 1, j);
-                    adyacentesArriba.add(coordenada);
+                for (int i = xFin + 1; i <= logitudMatrizX; i++) {
+                    if (marcas[i][j] != null && marcas[i][j].nombre.equals(nombreCultivo)) {
+                        Coordenada nueva = new Coordenada(i, j);
+                        coordenadas.add(nueva);
+                    }
                 }
             }
         }
 
-        return adyacentesArriba;
-    }
-
-    private List<Coordenada> obtenerCordenadasAdyacentesAbajo(Marca[][] marcas, CultivoSeleccionadoV2 alternativa) {
-        List<Coordenada> adyacentesAbajo = new ArrayList<>();
-
-        int yInicio = alternativa.getEsquinaSuperiorIzquierda().getY();
-        int yFin = alternativa.getEsquinaInferiorDerecha().getY();
-        int xFin = alternativa.getEsquinaInferiorDerecha().getX();
-
-        if (xFin + 1 <= marcas.length) {
-            for (int j = yInicio; j <= yFin; j++) {
-                if (alternativa.getNombreCultivo().equals(marcas[xFin + 1][j].nombre)) {
-                    Coordenada coordenada = new Coordenada(xFin + 1, j);
-                    adyacentesAbajo.add(coordenada);
-                }
-            }
-        }
-
-        return adyacentesAbajo;
+        return coordenadas;
     }
 
 }

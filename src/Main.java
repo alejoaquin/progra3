@@ -214,6 +214,9 @@ public class Main {
 
         Marca[][] matriz = new Marca[10][10];
         matriz[0][6] = new Marca("Maíz");
+        matriz[5][5] = new Marca("Frijol");
+
+        // este lo hace invalido, commentarlo para testear opci´øn valida
         matriz[4][5] = new Marca("Frijol");
 
         CultivoSeleccionadoV2 cultivo = new CultivoSeleccionadoV2();

@@ -15,38 +15,14 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
 
     @Override
     public boolean esValida(Marca[][] marcas, CultivoSeleccionadoV2 alternativa) {
-        // Obtener las coordenadas del cultivo
-        Coordenada superiorIzquierda = alternativa.getEsquinaSuperiorIzquierda();
-        Coordenada inferiorDerecha = alternativa.getEsquinaInferiorDerecha();
-
-        int xInicio = superiorIzquierda.getX();
-        int yInicio = superiorIzquierda.getY();
-        int xFin = inferiorDerecha.getX();
-        int yFin = inferiorDerecha.getY();
-
-        // Verificar si la suma de longitudes horizontal y vertical no supera 11
-        int longitudHorizontal = xFin - xInicio + 1;
-        int longitudVertical = yFin - yInicio + 1;
-
-        if (longitudHorizontal + longitudVertical > 11) {
-            return false;
-        }
-
-        // Verificar si todas las posiciones dentro del área están libres
-        for (int i = xInicio; i <= xFin; i++) {
-            for (int j = yInicio; j <= yFin; j++) {
-                if (marcas[i][j] != null) { // Si hay un cultivo ya plantado
-                    return false;
-                }
-            }
-        }
-
-        // Si no se ha encontrado ninguna colisión, es válido
-        return true;
+        return areaValida(alternativa) && areaLibre(marcas, alternativa);
     }
 
     @Override
     public boolean esRellenoValido(Marca[][] marcas, CultivoSeleccionadoV2 alternativaAEvaluar) {
+        if (!areaValida(alternativaAEvaluar) || !areaLibre(marcas, alternativaAEvaluar)) {
+            return false;
+        }
         // Obtener las coordenadas del cultivo que se evalúa
         Coordenada superiorIzquierda = alternativaAEvaluar.getEsquinaSuperiorIzquierda();
         Coordenada inferiorDerecha = alternativaAEvaluar.getEsquinaInferiorDerecha();
@@ -56,22 +32,6 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
         int xFin = inferiorDerecha.getX();
         int yFin = inferiorDerecha.getY();
         String nombreCultivo = alternativaAEvaluar.getNombreCultivo();
-
-        // Verificar que la longitud horizontal + la longitud vertical no exceda 11
-        int longitudHorizontal = xFin - xInicio + 1;
-        int longitudVertical = yFin - yInicio + 1;
-        if (longitudHorizontal + longitudVertical > 11) {
-            return false;
-        }
-
-        // Verificar si todas las posiciones dentro del área están libres
-        for (int i = xInicio; i <= xFin; i++) {
-            for (int j = yInicio; j <= yFin; j++) {
-                if (marcas[i][j] != null) { // Si hay un cultivo ya plantado
-                    return false;
-                }
-            }
-        }
 
         manejarMarca.marcarMatriz(alternativaAEvaluar, marcas, true);
 
@@ -108,37 +68,23 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
                 Coordenada esquinaSuperiorIzquierda = esquinasSuperioresIzquierda.get(i);
                 Coordenada esquinaInferiorDerecha = esquinasInferioresDerecha.get(j);
 
-                int xInicio = esquinaSuperiorIzquierda.getX();
-                int yInicio = esquinaSuperiorIzquierda.getY();
-                int xFin = esquinaInferiorDerecha.getX();
-                int yFin = esquinaInferiorDerecha.getY();
-
-                // Filtrar combinaciones incompatibles: la esquina superior izquierda debe estar por encima y a la izquierda de la esquina inferior derecha
-                if (xInicio > xFin || yInicio > yFin) {
-                    continue; // Si las coordenadas no forman un rectángulo válido, se descarta esta combinación
-                }
-                // Verificar si el área del rectángulo está completamente ocupada por el cultivo y no tiene celdas vacías
-                if (esAreaLlenadaConCultivo(marcas, xInicio, yInicio, xFin, yFin, nombreCultivo)) {
-                    // Si el área está completamente ocupada por el cultivo, creamos el rectángulo
-                    Rectangulo rect = new Rectangulo(xInicio, yInicio, xFin, yFin);
-                    rectangulosValidos.add(rect); // Añadimos el rectángulo válido a la lista
+                if (rectanguloValido(esquinaSuperiorIzquierda, esquinaInferiorDerecha)) {
+                    // Verificar si el área del rectángulo está completamente ocupada por el cultivo y no tiene celdas vacías
+                    if (areaSoloDelCultivo(marcas, esquinaSuperiorIzquierda, esquinaInferiorDerecha, nombreCultivo)) {
+                        // Si el área está completamente ocupada por el cultivo, creamos el rectángulo
+                        Rectangulo rect = new Rectangulo(
+                                esquinaSuperiorIzquierda.getX(),
+                                esquinaSuperiorIzquierda.getY(),
+                                esquinaInferiorDerecha.getX(),
+                                esquinaInferiorDerecha.getY()
+                        );
+                        rectangulosValidos.add(rect); // Añadimos el rectángulo válido a la lista
+                    }
                 }
             }
         }
 
         return rectangulosValidos;
-    }
-
-    // Método para verificar si el área está completamente ocupada por el mismo cultivo (sin celdas vacías)
-    private boolean esAreaLlenadaConCultivo(Marca[][] marcas, int xInicio, int yInicio, int xFin, int yFin, String nombreCultivo) {
-        for (int i = xInicio; i <= xFin; i++) {
-            for (int j = yInicio; j <= yFin; j++) {
-                if (marcas[i][j] == null || !marcas[i][j].nombre.equals(nombreCultivo)) {
-                    return false;
-                }
-            }
-        }
-        return true;  // Si todas las celdas están ocupadas por el mismo cultivo
     }
 
     private List<Coordenada> generarCoordenadasSuperiorIzquierda(Marca[][] marcas, int xInicio, int yInicio, int xFin, int yFin, String nombreCultivo) {
@@ -197,5 +143,55 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
         }
 
         return coordenadas;
+    }
+
+    private boolean rectanguloValido(Coordenada esquinaSuperiorIzquierda, Coordenada esquinaInferiorDerecha) {
+        return esquinaSuperiorIzquierda.getX() <= esquinaInferiorDerecha.getX() &&
+                esquinaSuperiorIzquierda.getY() <= esquinaInferiorDerecha.getY();
+    }
+
+    private boolean areaSoloDelCultivo(Marca[][] marcas, Coordenada esquinaSuperiorIzquierda,
+                                       Coordenada esquinaInferiorDerecha, String nombreCultivo) {
+        int xInicio = esquinaSuperiorIzquierda.getX();
+        int yInicio = esquinaSuperiorIzquierda.getY();
+        int xFin = esquinaInferiorDerecha.getX();
+        int yFin = esquinaInferiorDerecha.getY();
+
+        for (int i = xInicio; i <= xFin; i++) {
+            for (int j = yInicio; j <= yFin; j++) {
+                if (marcas[i][j] == null || !marcas[i][j].nombre.equals(nombreCultivo)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean areaValida(CultivoSeleccionadoV2 alternativa) {
+        int xInicio = alternativa.getEsquinaSuperiorIzquierda().getX();
+        int yInicio = alternativa.getEsquinaSuperiorIzquierda().getY();
+        int xFin = alternativa.getEsquinaInferiorDerecha().getX();
+        int yFin = alternativa.getEsquinaInferiorDerecha().getY();
+
+        int longitudHorizontal = xFin - xInicio + 1;
+        int longitudVertical = yFin - yInicio + 1;
+
+        return longitudHorizontal + longitudVertical <= 11;
+    }
+
+    private boolean areaLibre(Marca[][] marcas, CultivoSeleccionadoV2 alternativa) {
+        int xInicio = alternativa.getEsquinaSuperiorIzquierda().getX();
+        int yInicio = alternativa.getEsquinaSuperiorIzquierda().getY();
+        int xFin = alternativa.getEsquinaInferiorDerecha().getX();
+        int yFin = alternativa.getEsquinaInferiorDerecha().getY();
+
+        for (int i = xInicio; i <= xFin; i++) {
+            for (int j = yInicio; j <= yFin; j++) {
+                if (marcas[i][j] != null) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

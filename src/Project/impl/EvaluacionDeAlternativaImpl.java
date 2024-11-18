@@ -41,25 +41,17 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
         esquinasInferioresDerecha.add(inferiorDerecha);
 
         // Verificamos las adyacencias para formar nuevos rectángulos
-        List<Rectangulo> rectangulosNuevos = generarRectangulosConCoordenadas(esquinasSuperioresIzquierda, esquinasInferioresDerecha, marcas, nombreCultivo);
+        List<Rectangulo> rectangulosAreaInvalida = optenerRectangulosAreasInvalidasConCoordenadas(esquinasSuperioresIzquierda, esquinasInferioresDerecha, marcas, nombreCultivo);
 
-        // Verificar si cada rectángulo cumple con la condición
-        for (Rectangulo rect : rectangulosNuevos) {
-            //imprimirRectangulo(rect, marcas, rectangulosNuevos.indexOf(rect));
-            if (rect.getLongitudHorizontal() + rect.getLongitudVertical() > 11) {
-                manejarMarca.marcarMatriz(alternativaAEvaluar, marcas, false);
-                return false;  // Si alguna adyacencia es inválida, retornar false
-            }
-        }
         manejarMarca.marcarMatriz(alternativaAEvaluar, marcas, false);
-        return true;  // Si todas las adyacencias son válidas
+        return rectangulosAreaInvalida.isEmpty();  // Si todas las adyacencias son válidas
     }
 
     // Generar los rectángulos adyacentes posibles
-    public List<Rectangulo> generarRectangulosConCoordenadas(List<Coordenada> esquinasSuperioresIzquierda,
-                                                             List<Coordenada> esquinasInferioresDerecha,
-                                                             Marca[][] marcas,
-                                                             String nombreCultivo) {
+    public List<Rectangulo> optenerRectangulosAreasInvalidasConCoordenadas(List<Coordenada> esquinasSuperioresIzquierda,
+                                                                           List<Coordenada> esquinasInferioresDerecha,
+                                                                           Marca[][] marcas,
+                                                                           String nombreCultivo) {
         List<Rectangulo> rectangulosValidos = new ArrayList<>();
 
         // Recorrer todas las combinaciones entre las EsquinasSuperioresIzquierda y EsquinasInferioresDerecha
@@ -78,7 +70,10 @@ public class EvaluacionDeAlternativaImpl implements EvaluacionDeAlternativa {
                                 esquinaInferiorDerecha.getX(),
                                 esquinaInferiorDerecha.getY()
                         );
-                        rectangulosValidos.add(rect); // Añadimos el rectángulo válido a la lista
+
+                        if (rect.getLongitudHorizontal() + rect.getLongitudVertical() > 11) {
+                            rectangulosValidos.add(rect); // Añadimos el rectángulo válido a la lista
+                        }
                     }
                 }
             }

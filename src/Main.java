@@ -259,6 +259,7 @@ public class Main {
         alternativaAEvaluar.setNombreCultivo("Maíz");
         alternativaAEvaluar.setEsquinaSuperiorIzquierda(new Coordenada(2, 2));
         alternativaAEvaluar.setEsquinaInferiorDerecha(new Coordenada(3, 9));
+
         boolean esValido = evaluador.esRellenoValido(matriz, alternativaAEvaluar);
         System.out.println("Es válido: " + esValido);
         CultivoUtils.imprimirMatrizConColision(matriz, alternativaAEvaluar);

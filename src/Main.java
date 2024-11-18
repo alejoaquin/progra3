@@ -214,6 +214,9 @@ public class Main {
 
         Marca[][] matriz = new Marca[10][10];
         matriz[0][6] = new Marca("Maíz");
+        matriz[5][5] = new Marca("Frijol");
+
+        // este lo hace invalido, commentarlo para testear opci´øn valida
         matriz[4][5] = new Marca("Frijol");
 
         CultivoSeleccionadoV2 cultivo = new CultivoSeleccionadoV2();
@@ -241,18 +244,23 @@ public class Main {
         matriz[1][2] = new Marca("Maíz");
         matriz[1][3] = new Marca("Maíz");
 
+        matriz[4][3] = new Marca("Maíz");
+        matriz[4][4] = new Marca("Maíz");
+        matriz[5][3] = new Marca("Maíz");
+        matriz[5][4] = new Marca("Maíz");
 
-        CultivoSeleccionadoV2 mismoCultivoPlantado = new CultivoSeleccionadoV2();
-        mismoCultivoPlantado.setNombreCultivo("Maíz");
-        mismoCultivoPlantado.setEsquinaSuperiorIzquierda(new Coordenada(0, 0));
-        mismoCultivoPlantado.setEsquinaInferiorDerecha(new Coordenada(1, 3));
+        // Descomentar para probar uno no valido
+//        matriz[2][0] = new Marca("Maíz");
+//        matriz[3][0] = new Marca("Maíz");
+//        matriz[2][1] = new Marca("Maíz");
+//        matriz[3][1] = new Marca("Maíz");
 
         CultivoSeleccionadoV2 alternativaAEvaluar = new CultivoSeleccionadoV2();
         alternativaAEvaluar.setNombreCultivo("Maíz");
         alternativaAEvaluar.setEsquinaSuperiorIzquierda(new Coordenada(2, 2));
         alternativaAEvaluar.setEsquinaInferiorDerecha(new Coordenada(3, 9));
 
-        boolean esValido = evaluador.esRellenoValido(matriz, List.of(mismoCultivoPlantado), alternativaAEvaluar);
+        boolean esValido = evaluador.esRellenoValido(matriz, alternativaAEvaluar);
         System.out.println("Es válido: " + esValido);
         CultivoUtils.imprimirMatrizConColision(matriz, alternativaAEvaluar);
     }

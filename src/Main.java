@@ -14,8 +14,85 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        testBacktrackingConRelleno();
+        PlanificarCultivos planificador = new PlanificarCultivosImpl();
+        List<Cultivo> cultivos = new ArrayList<>();
 
+        Cultivo cultivo = new Cultivo();
+        cultivo.setNombre("Lechuga");
+        cultivo.setCostoPorParcela(100.5);
+        cultivo.setInversionRequerida(2000);
+        cultivo.setPrecioDeVentaPorParcela(500);
+        cultivo.setTemporadaOptima("Otoño");
+        cultivos.add(cultivo);
+
+        cultivo = new Cultivo();
+        cultivo.setNombre("Remolacha");
+        cultivo.setCostoPorParcela(105);
+        cultivo.setInversionRequerida(1000);
+        cultivo.setPrecioDeVentaPorParcela(450);
+        cultivo.setTemporadaOptima("Otoño");
+        cultivos.add(cultivo);
+
+        cultivo = new Cultivo();
+        cultivo.setNombre("Calabaza");
+        cultivo.setCostoPorParcela(97);
+        cultivo.setInversionRequerida(1500);
+        cultivo.setPrecioDeVentaPorParcela(475);
+        cultivo.setTemporadaOptima("Otoño");
+        cultivos.add(cultivo);
+
+        cultivo = new Cultivo();
+        cultivo.setNombre("Tomate");
+        cultivo.setCostoPorParcela(110.0);
+        cultivo.setInversionRequerida(2500);
+        cultivo.setPrecioDeVentaPorParcela(600);
+        cultivo.setTemporadaOptima("Verano");
+        cultivos.add(cultivo);
+
+        cultivo = new Cultivo();
+        cultivo.setNombre("Zanahoria");
+        cultivo.setCostoPorParcela(90.0);
+        cultivo.setInversionRequerida(1200);
+        cultivo.setPrecioDeVentaPorParcela(430);
+        cultivo.setTemporadaOptima("Primavera");
+        cultivos.add(cultivo);
+
+        cultivo = new Cultivo();
+        cultivo.setNombre("Maíz");
+        cultivo.setCostoPorParcela(130.0);
+        cultivo.setInversionRequerida(2200);
+        cultivo.setPrecioDeVentaPorParcela(580);
+        cultivo.setTemporadaOptima("Verano");
+        cultivos.add(cultivo);
+
+        cultivo = new Cultivo();
+        cultivo.setNombre("Espinaca");
+        cultivo.setCostoPorParcela(85.0);
+        cultivo.setInversionRequerida(1400);
+        cultivo.setPrecioDeVentaPorParcela(460);
+        cultivo.setTemporadaOptima("Invierno");
+        cultivos.add(cultivo);
+
+        cultivo = new Cultivo();
+        cultivo.setNombre("Brócoli");
+        cultivo.setCostoPorParcela(115.0);
+        cultivo.setInversionRequerida(1800);
+        cultivo.setPrecioDeVentaPorParcela(510);
+        cultivo.setTemporadaOptima("Otoño");
+        cultivos.add(cultivo);
+
+        int size = 2;
+
+        double[][] riesgos = new double[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                riesgos[i][j] = (i + j) / 200.0;
+            }
+        }
+        //imprimirMatrizDeRiesgos(riesgos);
+
+        List<CultivoSeleccionado> res = planificador.obtenerPlanificacion(cultivos, riesgos, "Otoño");
+        imprimirResultado(res);
     }
 
     private static void testBacktrackingConRelleno() {
@@ -45,7 +122,7 @@ public class Main {
         cultivo.setCostoPorParcela(1);
         cultivo.setInversionRequerida(1);
         cultivo.setPrecioDeVentaPorParcela(475);
-        cultivo.setTemporadaOptima("Otoño");
+        cultivo.setTemporadaOptima("Verano");
         cultivos.add(cultivo);
 
         cultivo = new Cultivo();
@@ -61,7 +138,7 @@ public class Main {
         cultivo.setCostoPorParcela(1);
         cultivo.setInversionRequerida(1);
         cultivo.setPrecioDeVentaPorParcela(430);
-        cultivo.setTemporadaOptima("Primavera");
+        cultivo.setTemporadaOptima("Invierno");
         cultivos.add(cultivo);
 
         cultivo = new Cultivo();
@@ -69,7 +146,7 @@ public class Main {
         cultivo.setCostoPorParcela(1);
         cultivo.setInversionRequerida(1);
         cultivo.setPrecioDeVentaPorParcela(580);
-        cultivo.setTemporadaOptima("Verano");
+        cultivo.setTemporadaOptima("Invierno");
         cultivos.add(cultivo);
 
         cultivo = new Cultivo();
@@ -88,7 +165,7 @@ public class Main {
         cultivo.setTemporadaOptima("Otoño");
         cultivos.add(cultivo);
 
-        int size = 4;
+        int size = 2;
 
         double[][] riesgos = new double[size][size];
         for (int i = 0; i < size; i++) {
@@ -116,7 +193,7 @@ public class Main {
 
 
         plantacionOptima.backtracking(parametro);
-        imprimirResultado(parametro.cultivosResultado);
+        imprimirResultadoV2(parametro.cultivosResultado);
 
         long endTime = System.currentTimeMillis();
         long durationInMillis = endTime - startTime;
@@ -130,6 +207,7 @@ public class Main {
         System.out.printf("Segundos: %.2f s%n", seconds);
         System.out.printf("Minutos: %.2f min%n", minutes);
 
+        //CultivoUtils.imprimirMatrizConColision(parametro.marcas, parametro.cultivosResultado.get(0));
     }
 
     //ToDo: poner devuelta en el main para la entrega
@@ -229,7 +307,7 @@ public class Main {
 
 
         plantacionOptima.backtracking(parametro);
-        imprimirResultado(parametro.cultivosResultado);
+        imprimirResultadoV2(parametro.cultivosResultado);
 
     }
 
@@ -310,7 +388,7 @@ public class Main {
 
         System.out.println("Llamando mejorRelleno.backtracking");
         mejorRelleno.backtracking(parametro);
-        imprimirResultado(parametro.rellenoResultado);
+        imprimirResultadoV2(parametro.rellenoResultado);
 
         long endTime = System.currentTimeMillis();
         long durationInMillis = endTime - startTime;
@@ -323,89 +401,6 @@ public class Main {
         System.out.printf("Milisegundos: %d ms%n", durationInMillis);
         System.out.printf("Segundos: %.2f s%n", seconds);
         System.out.printf("Minutos: %.2f min%n", minutes);
-    }
-
-    //ToDo: poner devuelta en el main para la entrega
-    private static void mainAnterior() {
-        PlanificarCultivos planificador = new PlanificarCultivosImpl();
-
-        List<Cultivo> cultivos = new ArrayList<>();
-
-        Cultivo cultivo = new Cultivo();
-        cultivo.setNombre("Lechuga");
-        cultivo.setCostoPorParcela(100.5);
-        cultivo.setInversionRequerida(2000);
-        cultivo.setPrecioDeVentaPorParcela(500);
-        cultivo.setTemporadaOptima("Otoño");
-        cultivos.add(cultivo);
-
-        cultivo = new Cultivo();
-        cultivo.setNombre("Remolacha");
-        cultivo.setCostoPorParcela(105);
-        cultivo.setInversionRequerida(1000);
-        cultivo.setPrecioDeVentaPorParcela(450);
-        cultivo.setTemporadaOptima("Otoño");
-        cultivos.add(cultivo);
-
-        cultivo = new Cultivo();
-        cultivo.setNombre("Calabaza");
-        cultivo.setCostoPorParcela(97);
-        cultivo.setInversionRequerida(1500);
-        cultivo.setPrecioDeVentaPorParcela(475);
-        cultivo.setTemporadaOptima("Otoño");
-        cultivos.add(cultivo);
-
-        cultivo = new Cultivo();
-        cultivo.setNombre("Tomate");
-        cultivo.setCostoPorParcela(110.0);
-        cultivo.setInversionRequerida(2500);
-        cultivo.setPrecioDeVentaPorParcela(600);
-        cultivo.setTemporadaOptima("Verano");
-        cultivos.add(cultivo);
-
-        cultivo = new Cultivo();
-        cultivo.setNombre("Zanahoria");
-        cultivo.setCostoPorParcela(90.0);
-        cultivo.setInversionRequerida(1200);
-        cultivo.setPrecioDeVentaPorParcela(430);
-        cultivo.setTemporadaOptima("Primavera");
-        cultivos.add(cultivo);
-
-        cultivo = new Cultivo();
-        cultivo.setNombre("Maíz");
-        cultivo.setCostoPorParcela(130.0);
-        cultivo.setInversionRequerida(2200);
-        cultivo.setPrecioDeVentaPorParcela(580);
-        cultivo.setTemporadaOptima("Verano");
-        cultivos.add(cultivo);
-
-        cultivo = new Cultivo();
-        cultivo.setNombre("Espinaca");
-        cultivo.setCostoPorParcela(85.0);
-        cultivo.setInversionRequerida(1400);
-        cultivo.setPrecioDeVentaPorParcela(460);
-        cultivo.setTemporadaOptima("Invierno");
-        cultivos.add(cultivo);
-
-        cultivo = new Cultivo();
-        cultivo.setNombre("Brócoli");
-        cultivo.setCostoPorParcela(115.0);
-        cultivo.setInversionRequerida(1800);
-        cultivo.setPrecioDeVentaPorParcela(510);
-        cultivo.setTemporadaOptima("Otoño");
-        cultivos.add(cultivo);
-
-
-        double[][] riesgos = new double[100][100];
-        for (int i = 0; i < 100; i++) {
-            for (int j = 0; j < 100; j++) {
-                riesgos[i][j] = (i + j) / 200.0;
-            }
-        }
-        imprimirMatrizDeRiesgos(riesgos);
-
-        List<CultivoSeleccionado> res = planificador.obtenerPlanificacion(cultivos, riesgos, "Otoño");
-        //imprimirResultado(res);
     }
 
     //ToDo: eliminar esto para la entrega
@@ -524,7 +519,7 @@ public class Main {
         Area area = new Area(new Coordenada(2, 2), new Coordenada(3, 9));
         System.out.println("Calculando alternativas");
         List<CultivoSeleccionadoV2> cultivoSeleccionadoV2s = alternativa.generarAlternativaRelleno(matriz, cultivos, riesgos, area, "Maiz");
-        imprimirResultado(cultivoSeleccionadoV2s);
+        imprimirResultadoV2(cultivoSeleccionadoV2s);
 
         //CultivoUtils.imprimirMatrizConColision(matriz, cultivoSeleccionadoV2s.get(0));
 
@@ -561,9 +556,15 @@ public class Main {
         }
     }
 
-    private static void imprimirResultado(List<CultivoSeleccionadoV2> res) {
+    private static void imprimirResultadoV2(List<CultivoSeleccionadoV2> res) {
         System.out.println("Imprimiendo resultados:");
         for (CultivoSeleccionadoV2 cultivo : res) {
+            System.out.println(cultivo);
+        }
+    }
+    private static void imprimirResultado(List<CultivoSeleccionado> res) {
+        System.out.println("Imprimiendo resultados:");
+        for (CultivoSeleccionado cultivo : res) {
             System.out.println(cultivo);
         }
     }

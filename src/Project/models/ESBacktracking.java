@@ -25,17 +25,4 @@ public class ESBacktracking {
         this.etapa = etapa;
         this.gananciaMejor = gananciaMejor;
     }
-
-    public ESBacktracking clonar() {
-        return new ESBacktracking(
-                this.cultivosResultado,
-                this.cultivosParcial,
-                this.marcas,
-                this.riesgos,
-                this.temporada,
-                this.cultivos,
-                this.etapa,
-                this.gananciaMejor
-        );
-    }
 }
